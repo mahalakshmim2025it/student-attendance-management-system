@@ -55,17 +55,42 @@ JOIN Students s ON a.student_id = s.student_id
 JOIN Courses c ON a.course_id = c.course_id
 GROUP BY a.student_id, s.name, c.course_id, c.course_code;
 
--- Insert Test Data
-INSERT INTO Users (username, password, role) VALUES 
-('rahul101', 'stu123', 'STUDENT');
-
-INSERT INTO Students (user_id, roll_number, name, email, semester) VALUES 
-(1, '2026-CS-01', 'Rahul Sharma', 'rahul@univ.edu', 5);
+DESCRIBE Attendance_Summary;
 
 INSERT INTO Courses (course_code, course_name) VALUES 
-('CS301', 'Database Management Systems');
+('CS23333', 'OOP using Java'),
+('CS23332', 'Database Management Systems');
 
-INSERT INTO Attendance_Logs (student_id, course_id, date, status) VALUES 
-(1, 1, '2026-10-01', 'PRESENT'),
-(1, 1, '2026-10-02', 'PRESENT'),
-(1, 1, '2026-10-03', 'ABSENT');
+INSERT INTO Users (username, password, role) VALUES 
+('rahul_s', 'stu123', 'STUDENT'),
+('priya_r', 'stu123', 'STUDENT'),
+('arun_k', 'stu123', 'STUDENT'),
+('sneha_g', 'stu123', 'STUDENT'),
+('vikram_p', 'stu123', 'STUDENT'),
+('ananya_i', 'stu123', 'STUDENT'),
+('karthik_r', 'stu123', 'STUDENT'),
+('divya_n', 'stu123', 'STUDENT'),
+('manoj_k', 'stu123', 'STUDENT'),
+('pooja_h', 'stu123', 'STUDENT'),
+('sanjay_v', 'stu123', 'STUDENT'),
+('neha_s', 'stu123', 'STUDENT'),
+('rohit_d', 'stu123', 'STUDENT'),
+('swathi_m', 'stu123', 'STUDENT'),
+('kiran_ra', 'stu123', 'STUDENT');
+
+INSERT INTO Students (user_id, roll_number, name, email, semester) VALUES 
+(1,  '2026-CS-01', 'Rahul Sharma', 'rahul@univ.edu', 3),
+(2,  '2026-CS-02', 'Priya Ramesh', 'priya@univ.edu', 3),
+(3,  '2026-CS-03', 'Arun Kumar', 'arun@univ.edu', 3),
+(4,  '2026-CS-04', 'Sneha Gupta', 'sneha@univ.edu', 3),
+(5,  '2026-CS-05', 'Vikram Patel', 'vikram@univ.edu', 3),
+(6,  '2026-CS-06', 'Ananya Iyer', 'ananya@univ.edu', 3),
+(7,  '2026-CS-07', 'Karthik Raja', 'karthik@univ.edu', 3),
+(8,  '2026-CS-08', 'Divya Nair', 'divya@univ.edu', 3),
+(9,  '2026-CS-09', 'Manoj Kumar', 'manoj@univ.edu', 3),
+(10, '2026-CS-10', 'Pooja Hegde', 'pooja@univ.edu', 3),
+(11, '2026-CS-11', 'Sanjay Verma', 'sanjay@univ.edu', 3),
+(12, '2026-CS-12', 'Neha Singh', 'neha@univ.edu', 3),
+(13, '2026-CS-13', 'Rohit Das', 'rohit@univ.edu', 3),
+(14, '2026-CS-14', 'Swathi Menon', 'swathi@univ.edu', 3),
+(15, '2026-CS-15', 'Kiran Rao', 'kiran@univ.edu', 3);

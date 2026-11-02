@@ -15,9 +15,10 @@ public class Main {
             System.out.println("\n=== Student Attendance & Performance System ===");
             System.out.println("1. View All Students");
             System.out.println("2. View Attendance Summary Report");
-            System.out.println("3. Mark Attendance");
-            System.out.println("4. Exit");
-            System.out.print("Enter your choice (1-4): ");
+            System.out.println("3. Mark Attendance (Individual)");
+            System.out.println("4. Enter Batch Attendance");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice (1-5): ");
 
             if (scanner.hasNextInt()) {
                 choice = scanner.nextInt();
@@ -33,7 +34,11 @@ public class Main {
                         break;
 
                     case 2:
-                        attendanceDAO.printAttendanceSummary();
+                        System.out.print("Enter Course ID to view summary (1: CS23333, 2: CS23332): ");
+                        int summaryCourseId = scanner.nextInt();
+                        scanner.nextLine(); // Consume newline
+                        
+                        attendanceDAO.printAttendanceSummary(summaryCourseId);
                         break;
 
                     case 3:
@@ -54,20 +59,59 @@ public class Main {
                             System.out.println("❌ Failed to record attendance. Check IDs and try again.");
                         }
                         break;
-
+                    
                     case 4:
+                        System.out.println("\n--- Batch Attendance Mode ---");
+                        System.out.print("Enter Course ID for this class (1: CS23333, 2: CS23332): ");
+                        int batchCourseId = scanner.nextInt();
+                        scanner.nextLine(); // consume newline
+                        
+                        System.out.print("Enter Date (YYYY-MM-DD): ");
+                        String batchDate = scanner.nextLine();
+
+                        // Fetch all students so we can loop through them
+                        List<Student> allStudents = studentDAO.getAllStudents();
+                        
+                        if (allStudents.isEmpty()) {
+                            System.out.println("No students found in the system!");
+                            break;
+                        }
+
+                        System.out.println("\nMarking attendance. Enter [P]resent, [A]bsent, or [S]kip:");
+
+                        for (Student student : allStudents) {
+                            System.out.print("Student: " + student.getName() + " (" + student.getRollNumber() + ") [P/A/S]: ");
+                            String input = scanner.nextLine().trim().toUpperCase();
+                            if (input.equals("P") || input.equals("PRESENT")) {
+                                status = "PRESENT";
+                            } else if (input.equals("A") || input.equals("ABSENT")) {
+                                status = "ABSENT";
+                            } else if (input.equals("S") || input.equals("SKIP")) {
+                                System.out.println("  ↳ Skipped.");
+                                continue; // Skip this student
+                            } else {
+                                System.out.println("⚠️ Invalid input. Skipping student.");
+                                continue;
+                            }
+
+                            attendanceDAO.markAttendance(student.getStudentId(), batchCourseId, batchDate, status);
+                        }
+                        System.out.println("✅ Batch attendance recording completed!");
+                        break;
+
+                    case 5:
                         System.out.println("Exiting system. Goodbye!");
                         break;
 
                     default:
-                        System.out.println("⚠️ Invalid choice. Please enter a number between 1 and 4.");
+                        System.out.println("⚠️ Invalid choice. Please enter a number between 1 and 5.");
                 }
             } else {
                 System.out.println("⚠️ Invalid input. Please enter a valid number.");
                 scanner.next(); // Clear invalid token
             }
 
-        } while (choice != 4);
+        } while (choice != 5); // Fixed: loop until choice 5 is selected
 
         scanner.close();
     }

@@ -10,7 +10,7 @@ public class AttendanceDAO {
 
     // Record a daily attendance entry
     public boolean markAttendance(int studentId, int courseId, String date, String status) {
-        String query = "INSERT INTO Attendance_Logs (student_id, course_id, log_date, status) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO Attendance_Logs (student_id, course_id, date, status) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -31,39 +31,44 @@ public class AttendanceDAO {
 
     // Display summary from Attendance_Summary view
     // Display summary from Attendance_Summary view with threshold warnings
-    public void printAttendanceSummary() {
-        String query = "SELECT * FROM Attendance_Summary";
+    public void printAttendanceSummary(int courseId) {
+    String query = "SELECT * FROM Attendance_Summary WHERE course_id = ?";
+    
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+        
+        pstmt.setInt(1, courseId);
+        ResultSet rs = pstmt.executeQuery();
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
+        System.out.println("\n==================================================");
+        System.out.println("           ATTENDANCE SUMMARY REPORT             ");
+        System.out.println("==================================================");
+        System.out.printf("%-5s | %-18s | %-8s | %-6s | %-10s\n", "ID", "Student Name", "Present", "Total", "Percentage");
+        System.out.println("--------------------------------------------------");
 
-            System.out.println("\n----------------- ATTENDANCE SUMMARY -----------------");
-            boolean hasRecords = false;
-            while (rs.next()) {
-                hasRecords = true;
-                String name = rs.getString("student_name");
-                String course = rs.getString("course_code");
-                long totalDays = rs.getLong("total_days");
-                long daysPresent = rs.getLong("days_present");
-                double percentage = rs.getDouble("attendance_percentage");
+        boolean hasRecords = false;
+        while (rs.next()) {
+            hasRecords = true;
+            int studentId = rs.getInt("student_id");
+            String name = rs.getString("student_name");
+            int daysPresent = rs.getInt("days_present");
+            int totalDays = rs.getInt("total_days");
+            double percentage = rs.getDouble("attendance_percentage");
 
-                // Check 75% attendance threshold
-                String statusTag = "";
-                if (percentage < 75.0) {
-                    statusTag = " ** [LOW ATTENDANCE]";
-                }
+            // Flag low attendance (< 75%)
+            String warning = (percentage < 75.0) ? " ⚠️ [LOW]" : "";
 
-                System.out.printf("Student: %-15s | Course: %-8s | Classes: %d/%d | Percentage: %.2f%%%s\n",
-                        name, course, daysPresent, totalDays, percentage, statusTag);
-            }
-            if (!hasRecords) {
-                System.out.println("No attendance records found yet.");
-            }
-            System.out.println("------------------------------------------------------\n");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.printf("%-5d | %-18s | %-8d | %-6d | %6.2f%%%s\n", 
+                studentId, name, daysPresent, totalDays, percentage, warning);
         }
+
+        if (!hasRecords) {
+            System.out.println("No attendance logs found for this course ID.");
+        }
+        System.out.println("==================================================");
+
+    } catch (SQLException e) {
+        System.out.println("❌ Error fetching attendance summary: " + e.getMessage());
     }
+}
 }
