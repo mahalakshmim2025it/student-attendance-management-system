@@ -49,7 +49,7 @@ public class Main {
                         scanner.nextLine(); // Consume newline
                         System.out.print("Enter Date (YYYY-MM-DD): ");
                         String date = scanner.nextLine();
-                        System.out.print("Enter Status ([P]resent / [A]bsent): ");
+                        System.out.print("Enter Status ([P]resent / [A]bsent / [E]xcused): ");
                         String inputStatus = scanner.nextLine().trim().toUpperCase();
 
                         // Map short inputs to full ENUM values
@@ -58,16 +58,18 @@ public class Main {
                             finalStatus = "PRESENT";
                         } else if (inputStatus.equals("A") || inputStatus.equals("ABSENT")) {
                             finalStatus = "ABSENT";
+                        } else if (inputStatus.equals("E") || inputStatus.equals("EXCUSED")) {
+                            finalStatus = "EXCUSED";
                         } else {
-                            System.out.println("❌ Invalid status. Please enter P or A.");
+                            System.out.println("Invalid status. Please enter P, A, or E.");
                             break;
                         }
 
                         boolean success = attendanceDAO.markAttendance(sId, cId, date, finalStatus);
                         if (success) {
-                            System.out.println("✅ Attendance recorded successfully!");
+                            System.out.println("Attendance recorded successfully!");
                         } else {
-                            System.out.println("❌ Failed to record attendance. Check IDs and try again.");
+                            System.out.println("Failed to record attendance. Check IDs and try again.");
                         }
                         break;
                     
@@ -88,28 +90,30 @@ public class Main {
                             break;
                         }
 
-                        System.out.println("\nMarking attendance. Enter [P]resent, [A]bsent, or [S]kip:");
+                        System.out.println("\nMarking attendance. Enter [P]resent, [A]bsent, [E]xcused, or [S]kip:");
 
                         for (Student student : allStudents) {
-                            System.out.print("Student: " + student.getName() + " (" + student.getRollNumber() + ") [P/A/S]: ");
+                            System.out.print("Student: " + student.getName() + " (" + student.getRollNumber() + ") [P/A/E/S]: ");
                             String input = scanner.nextLine().trim().toUpperCase();
                             
-                            String status = ""; // Declared properly here
+                            String status = ""; 
                             if (input.equals("P") || input.equals("PRESENT")) {
                                 status = "PRESENT";
                             } else if (input.equals("A") || input.equals("ABSENT")) {
                                 status = "ABSENT";
+                            } else if (input.equals("E") || input.equals("EXCUSED")) {
+                                status = "EXCUSED";
                             } else if (input.equals("S") || input.equals("SKIP")) {
                                 System.out.println("  ↳ Skipped.");
-                                continue; // Skip this student
+                                continue; 
                             } else {
-                                System.out.println("⚠️ Invalid input. Skipping student.");
+                                System.out.println("Invalid input. Skipping student.");
                                 continue;
                             }
 
                             attendanceDAO.markAttendance(student.getStudentId(), batchCourseId, batchDate, status);
                         }
-                        System.out.println("✅ Batch attendance recording completed!");
+                        System.out.println("Batch attendance recording completed!");
                         break;
 
                     case 5:
@@ -117,10 +121,10 @@ public class Main {
                         break;
 
                     default:
-                        System.out.println("⚠️ Invalid choice. Please enter a number between 1 and 5.");
+                        System.out.println("Invalid choice. Please enter a number between 1 and 5.");
                 }
             } else {
-                System.out.println("⚠️ Invalid input. Please enter a valid number.");
+                System.out.println("Invalid input. Please enter a valid number.");
                 scanner.next(); // Clear invalid token
             }
 

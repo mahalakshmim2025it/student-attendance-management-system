@@ -26,7 +26,7 @@ public class AttendanceDAO {
         return rowsAffected > 0;
         
     } catch (SQLException e) {
-        System.out.println("❌ Database Error: " + e.getMessage());
+        System.out.println("Database Error: " + e.getMessage());
         return false;
     }
 }
@@ -58,7 +58,7 @@ public class AttendanceDAO {
             double percentage = rs.getDouble("attendance_percentage");
 
             // Flag low attendance (< 75%)
-            String warning = (percentage < 75.0) ? " ⚠️ [LOW]" : "";
+            String warning = (percentage < 75.0) ? " [LOW]" : "";
 
             System.out.printf("%-5d | %-18s | %-8d | %-6d | %6.2f%%%s\n", 
                 studentId, name, daysPresent, totalDays, percentage, warning);
@@ -70,7 +70,7 @@ public class AttendanceDAO {
         System.out.println("==================================================");
 
     } catch (SQLException e) {
-        System.out.println("❌ Error fetching attendance summary: " + e.getMessage());
+        System.out.println("Error fetching attendance summary: " + e.getMessage());
     }
 }
 }

@@ -47,9 +47,9 @@ SELECT
     s.name AS student_name,
     c.course_id,
     c.course_code,
-    COUNT(CASE WHEN a.status = 'PRESENT' THEN 1 END) AS days_present,
+    COUNT(CASE WHEN a.status = 'PRESENT' OR a.status = 'EXCUSED' THEN 1 END) AS days_present,
     COUNT(*) AS total_days,
-    ROUND((COUNT(CASE WHEN a.status = 'PRESENT' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attendance_percentage
+    ROUND((COUNT(CASE WHEN a.status = 'PRESENT' OR a.status = 'EXCUSED' THEN 1 END) * 100.0 / COUNT(*)), 2) AS attendance_percentage
 FROM Attendance_Logs a
 JOIN Students s ON a.student_id = s.student_id
 JOIN Courses c ON a.course_id = c.course_id
