@@ -10,24 +10,26 @@ public class AttendanceDAO {
 
     // Record a daily attendance entry
     public boolean markAttendance(int studentId, int courseId, String date, String status) {
-        String query = "INSERT INTO Attendance_Logs (student_id, course_id, date, status) VALUES (?, ?, ?, ?)";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setInt(1, studentId);
-            pstmt.setInt(2, courseId);
-            pstmt.setDate(3, java.sql.Date.valueOf(date)); // Expects YYYY-MM-DD
-            pstmt.setString(4, status); // 'PRESENT' or 'ABSENT'
-
-            int rowsInserted = pstmt.executeUpdate();
-            return rowsInserted > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    // Using INSERT ... ON DUPLICATE KEY UPDATE so it updates if a record already exists for that day
+    String query = "INSERT INTO Attendance_Logs (student_id, course_id, date, status) VALUES (?, ?, ?, ?) " +
+                   "ON DUPLICATE KEY UPDATE status = VALUES(status)";
+    
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+        
+        pstmt.setInt(1, studentId);
+        pstmt.setInt(2, courseId);
+        pstmt.setString(3, date);
+        pstmt.setString(4, status);
+        
+        int rowsAffected = pstmt.executeUpdate();
+        return rowsAffected > 0;
+        
+    } catch (SQLException e) {
+        System.out.println("❌ Database Error: " + e.getMessage());
+        return false;
     }
+}
 
     // Display summary from Attendance_Summary view
     // Display summary from Attendance_Summary view with threshold warnings

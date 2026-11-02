@@ -49,10 +49,21 @@ public class Main {
                         scanner.nextLine(); // Consume newline
                         System.out.print("Enter Date (YYYY-MM-DD): ");
                         String date = scanner.nextLine();
-                        System.out.print("Enter Status (PRESENT/ABSENT): ");
-                        String status = scanner.nextLine().toUpperCase();
+                        System.out.print("Enter Status ([P]resent / [A]bsent): ");
+                        String inputStatus = scanner.nextLine().trim().toUpperCase();
 
-                        boolean success = attendanceDAO.markAttendance(sId, cId, date, status);
+                        // Map short inputs to full ENUM values
+                        String finalStatus = "";
+                        if (inputStatus.equals("P") || inputStatus.equals("PRESENT")) {
+                            finalStatus = "PRESENT";
+                        } else if (inputStatus.equals("A") || inputStatus.equals("ABSENT")) {
+                            finalStatus = "ABSENT";
+                        } else {
+                            System.out.println("❌ Invalid status. Please enter P or A.");
+                            break;
+                        }
+
+                        boolean success = attendanceDAO.markAttendance(sId, cId, date, finalStatus);
                         if (success) {
                             System.out.println("✅ Attendance recorded successfully!");
                         } else {
@@ -82,6 +93,8 @@ public class Main {
                         for (Student student : allStudents) {
                             System.out.print("Student: " + student.getName() + " (" + student.getRollNumber() + ") [P/A/S]: ");
                             String input = scanner.nextLine().trim().toUpperCase();
+                            
+                            String status = ""; // Declared properly here
                             if (input.equals("P") || input.equals("PRESENT")) {
                                 status = "PRESENT";
                             } else if (input.equals("A") || input.equals("ABSENT")) {
@@ -111,7 +124,7 @@ public class Main {
                 scanner.next(); // Clear invalid token
             }
 
-        } while (choice != 5); // Fixed: loop until choice 5 is selected
+        } while (choice != 5);
 
         scanner.close();
     }
